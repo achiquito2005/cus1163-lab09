@@ -33,27 +33,34 @@ public class FIFOPageReplacementLab {
      *   Access 3: queue=[2,3], set={2,3}, FAULT (removed 1)
      *   Access 1: queue=[3,1], set={3,1}, FAULT (removed 2)
      *
-     *   Result: [4 faults, 0 hits]
-     */
+     *   Result: [4 faults, 0 hits     */
     public static int[] simulateFIFO(int[] referenceString, int numFrames) {
         int pageFaults = 0;
         int pageHits = 0;
 
-        // TODO 1: Implement FIFO algorithm here
-        // Queue<Integer> queue = new LinkedList<>();
-        // Set<Integer> pagesInMemory = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+    // Set for fast “is this page already in memory?”
+        Set<Integer> pagesInMemory = new HashSet<>();
 
-        // for (int page : referenceString) {
-        //     if (pagesInMemory.contains(page)) {
-        //         // Page HIT
-        //     } else {
-        //         // Page FAULT
-        //         if (queue.size() == numFrames) {
-        //             // Remove oldest page
-        //         }
-        //         // Add new page
-        //     }
-        // }
+        for (int page : referenceString) {
+            if (pagesInMemory.contains(page)) {
+            // Page HIT
+                pageHits++;
+            } else {
+            // Page FAULT
+                pageFaults++;
+
+            // If frames are full, remove the oldest page
+                if (queue.size() == numFrames) {
+                    int victim = queue.poll();     // remove from queue
+                    pagesInMemory.remove(victim);  // remove from set too
+                }
+
+            // Add new page to memory
+                queue.offer(page);
+                pagesInMemory.add(page);
+            }
+        }
 
         return new int[]{pageFaults, pageHits};
     }
